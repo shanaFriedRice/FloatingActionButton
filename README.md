@@ -34,7 +34,3 @@ Known issues
 It can only be placed on one page individually. It can’t be placed on 2 connected pages or more.
 If you have any questions, feel free to ask!
 
-It's on Github as well:
-https://github.com/shanaFriedRice/FloatingActionButton
-
-
