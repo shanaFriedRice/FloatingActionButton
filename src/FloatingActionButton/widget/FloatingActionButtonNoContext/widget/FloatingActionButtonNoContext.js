@@ -3,10 +3,10 @@
     FloatingActionButton
     ========================
 
-    @file      : FloatingActionButton.js
-    @version   : 1.0.0
+    @file      : FloatingActionButtonNoContext.js
+    @version   : 2.0.0
     @author    : Shana Lai <shana.lai@timeseries.nl>
-    @date      : 5/31/2017
+    @date      : 10/18/2017
     @copyright : Time Series 2017
     @license   : Apache 2
 
@@ -33,14 +33,14 @@ define([
     "dojo/_base/event",
 
     "FloatingActionButton/lib/jquery-1.11.2",
-    "dojo/text!FloatingActionButton/widget/template/FloatingActionButton.html"
+    "dojo/text!FloatingActionButton/template/FloatingActionButton.html"
 ], function (declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp, dojoGeometry, dojoClass, dojoStyle, dojoConstruct, dojoArray, lang, dojoText, dojoHtml, dojoEvent, _jQuery, widgetTemplate) {
     "use strict";
 
     var $ = _jQuery.noConflict(true);
 
     // Declare widget's prototype.
-    return declare("FloatingActionButton.widget.FloatingActionButton", [ _WidgetBase, _TemplatedMixin ], {
+    return declare("FloatingActionButton.widget.FloatingActionButtonNoContext.widget.FloatingActionButtonNoContext", [ _WidgetBase, _TemplatedMixin ], {
         // _TemplatedMixin will create our dom node using this HTML template.
         templateString: widgetTemplate,
 
@@ -48,10 +48,10 @@ define([
         mainButtonColor: "",
         mainButtonImage: "",
         widgetPositionBottom: "",
+        nameOfMicroflow: "",
 
         // Internal variables. Non-primitives created in the prototype are shared between all widget instances.
         _handles: null,
-        _contextObj: null,
         _alertDiv: null,
         _readOnly: false,
 
@@ -66,13 +66,6 @@ define([
             logger.debug(this.id + ".postCreate");
             this._setupEvents();
         },
-
-        update: function (obj, callback) {
-            logger.debug(this.id + ".update");
-            this._contextObj = obj;
-            callback();          
-        },
-       
 
         // Attach events to HTML dom elements
         _setupEvents: function () {
@@ -138,6 +131,13 @@ define([
             }
 
             //Get the amount of sub-buttons
+            if (typeof this.subButtonList !== "undefined" && this.subButtonList.length === 0) {
+                for (m = 0; m < 4; m++) {
+                    k = m + 1;
+                    this['subButton'+k].style.display = "none";
+                }
+            }
+
             if (typeof this.subButtonList !== "undefined" && this.subButtonList.length > 0) {
 
                 _amountSubButton = this.subButtonList.length;
@@ -194,6 +194,12 @@ define([
                         height: _hoverHeight
                     });
                 });
+
+                $(this.floatingContainer).mouseleave(function(){
+                    $(this).animate({
+                        height: '55px'
+                    });
+                });
             }
 
             //Set position of the widget
@@ -224,63 +230,53 @@ define([
             }
         },
 
-        //Execute Microflows function
-        _execMf: function (mf, guid, cb) {
-            console.log('execMf');
+        _execMf: function () {
             logger.debug(this.id + "._execMf");
-            if (mf && guid) {
-                mx.ui.action(mf, {
-                    params: {
-                        applyto: "selection",
-                        guids: [guid]
-                    },
-                    callback: lang.hitch(this, function (objs) {
-                        if (cb && typeof cb === "function") {
-                            cb(objs);
-                        }
-                    }),
-                    error: function (error) {
-                        console.debug(error.description);
-                    }
-                }, this);
+            if (this.nameOfMicroflow) {
+                mx.ui.action(this.nameOfMicroflow, {}, this);
             }
         },
 
         triggerMainButtonMicroflow: function() {
             console.log("triggered main button microflow");
             if (typeof this.mainButtonMicroflow !== 'undefined') {
-                this._execMf(this.mainButtonMicroflow, this._contextObj.getGuid());
+                this.nameOfMicroflow = this.mainButtonMicroflow;
+                this._execMf();
             }
         },
 
         triggerSubButtonMicroflow1: function() {
             console.log("triggered sub-button 1 microflow");
             if (typeof this.subButtonList[0] !== 'undefined' && typeof this.subButtonList[0].enumMicroflow !== 'undefined') {
-                this._execMf(this.subButtonList[0].enumMicroflow, this._contextObj.getGuid());
+                this.nameOfMicroflow = this.subButtonList[0].enumMicroflow;
+                this._execMf();
             }
         },
 
         triggerSubButtonMicroflow2: function() {
             console.log("triggered sub-button 2 microflow");
             if (typeof this.subButtonList[1] !== 'undefined' && typeof this.subButtonList[1].enumMicroflow !== 'undefined') {
-                this._execMf(this.subButtonList[1].enumMicroflow, this._contextObj.getGuid());
+                this.nameOfMicroflow = this.subButtonList[1].enumMicroflow;
+                this._execMf();
             }
         },
 
         triggerSubButtonMicroflow3: function() {
             console.log("triggered sub-button 3 microflow");
             if (typeof this.subButtonList[2] !== 'undefined' && typeof this.subButtonList[2].enumMicroflow !== 'undefined') {
-                this._execMf(this.subButtonList[2].enumMicroflow, this._contextObj.getGuid());
+                this.nameOfMicroflow = this.subButtonList[2].enumMicroflow;
+                this._execMf();
             }
         },
 
         triggerSubButtonMicroflow4: function() {
             console.log("triggered sub-button 4 microflow");
             if (typeof this.subButtonList[3] !== 'undefined' && typeof this.subButtonList[3].enumMicroflow !== 'undefined') {
-                this._execMf(this.subButtonList[3].enumMicroflow, this._contextObj.getGuid());
+                this.nameOfMicroflow = this.subButtonList[3].enumMicroflow;
+                this._execMf();
             }
         }
     });
 });
 
-require(["FloatingActionButton/widget/FloatingActionButton"]);
+require(["FloatingActionButton/widget/FloatingActionButtonNoContext/widget/FloatingActionButtonNoContext"]);
