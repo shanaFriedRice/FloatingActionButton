@@ -33,14 +33,14 @@ define([
     "dojo/_base/event",
 
     "FloatingActionButton/lib/jquery-1.11.2",
-    "dojo/text!FloatingActionButton/template/FloatingActionButton.html"
+    "dojo/text!FloatingActionButton/widget/template/FloatingActionButton.html"
 ], function (declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp, dojoGeometry, dojoClass, dojoStyle, dojoConstruct, dojoArray, lang, dojoText, dojoHtml, dojoEvent, _jQuery, widgetTemplate) {
     "use strict";
 
     var $ = _jQuery.noConflict(true);
 
     // Declare widget's prototype.
-    return declare("FloatingActionButton.widget.FloatingActionButton.widget.FloatingActionButton", [ _WidgetBase, _TemplatedMixin ], {
+    return declare("FloatingActionButton.widget.FloatingActionButton", [ _WidgetBase, _TemplatedMixin ], {
         // _TemplatedMixin will create our dom node using this HTML template.
         templateString: widgetTemplate,
 
@@ -107,37 +107,10 @@ define([
                 j = 0,
                 k = 0;
 
-            //Main button settings
-            this.mainButton.style.backgroundColor = this.mainButtonColor;
-
-            if (typeof this.mainButtonImage !== "undefined") {
-                _mainButtonImageName = this.mainButtonImage;
-                _endOfName = _mainButtonImageName.indexOf("?");
-                if (_endOfName !== -1) {
-                    _mainButtonImageName = _mainButtonImageName.substring(0, _endOfName);
-                } 
-                this.mainButton.style.backgroundImage = "url('" + encodeURI(_mainButtonImageName) + "')";
-            }
-        
-            if (typeof this.mainButtonIcon !== "undefined") {
-                _mainButtonIconName = this.mainButtonIcon;
-                _endOfIconName = _mainButtonIconName.indexOf("?");
-                if (_endOfIconHoverName !== -1) {
-                    _mainButtonIconName = _mainButtonIconName.substring(0, _endOfIconName);  
-                }
-                this.mainButtonPlus.src = _mainButtonIconName;
-            }
-
-            if (typeof this.mainButtonIconHover !== "undefined") {
-                _mainButtonIconHoverName = this.mainButtonIconHover;
-                _endOfIconHoverName  = _mainButtonIconHoverName.indexOf("?");
-                if (_endOfIconHoverName !== -1) {
-                    _mainButtonIconHoverName = _mainButtonIconHoverName.substring(0, _endOfIconHoverName );
-                }
-                this.mainButtonEdit.src = _mainButtonIconHoverName;
-            }
-
-
+            //Get the amount of sub-buttons
+            _amountSubButton = this.subButtonList.length;
+            
+            //Sub buttons settings
             if (typeof this.subButtonList !== "undefined" && this.subButtonList.length === 0) {
                 for (m = 0; m < 4; m++) {
                     k = m + 1;
@@ -145,10 +118,7 @@ define([
                 }
             }
             
-            //Get the amount of sub-buttons
             if (typeof this.subButtonList !== "undefined" && this.subButtonList.length > 0) {
-
-                _amountSubButton = this.subButtonList.length;
 
                 //Sub-buttons settings
                 for (i = 0; i < _amountSubButton; i++) {
@@ -183,31 +153,61 @@ define([
                     k = m + 1;
                     this['subButton'+k].style.display = "none";
                 }
+            }
 
-                //widgetFloatingContainer:hover height based on amount of buttons
-                if (_amountSubButton === 4) {
-                    _hoverHeight = "330px";
-                } else if (_amountSubButton === 3){
-                    _hoverHeight = "265px";
-                } else if (_amountSubButton === 2){
-                    _hoverHeight = "200px";
-                } else if (_amountSubButton === 1){
-                    _hoverHeight = "140px";
-                } else if (_amountSubButton === 0){
-                    _hoverHeight = "65px";
+            //widgetFloatingContainer: set hover height based on amount of buttons
+            if (_amountSubButton === 4) {
+                _hoverHeight = "330px";
+            } else if (_amountSubButton === 3){
+                _hoverHeight = "265px";
+            } else if (_amountSubButton === 2){
+                _hoverHeight = "200px";
+            } else if (_amountSubButton === 1){
+                _hoverHeight = "140px";
+            } else if (_amountSubButton === 0){
+                _hoverHeight = "65px";
+            }
+
+            $(this.floatingContainer).mouseenter(function(){
+                $(this).animate({
+                    height: _hoverHeight
+                });
+            });
+
+            $(this.floatingContainer).mouseleave(function(){
+                $(this).animate({
+                    height: '55px'
+                });
+            });
+
+            //Main button settings
+            this.mainButton.style.backgroundColor = this.mainButtonColor;
+            
+            if (typeof this.mainButtonImage !== "undefined") {
+                _mainButtonImageName = this.mainButtonImage;
+                _endOfName = _mainButtonImageName.indexOf("?");
+                if (_endOfName !== -1) {
+                    _mainButtonImageName = _mainButtonImageName.substring(0, _endOfName);
+                } 
+                this.mainButton.style.backgroundImage = "url('" + encodeURI(_mainButtonImageName) + "')";
+            }
+        
+            if (typeof this.mainButtonIcon !== "undefined") {
+                _mainButtonIconName = this.mainButtonIcon;
+                _endOfIconName = _mainButtonIconName.indexOf("?");
+                if (_endOfIconHoverName !== -1) {
+                    _mainButtonIconName = _mainButtonIconName.substring(0, _endOfIconName);  
                 }
+                this.mainButtonPlus.src = _mainButtonIconName;
+            }
 
-                $(this.floatingContainer).mouseenter(function(){
-                    $(this).animate({
-                        height: _hoverHeight
-                    });
-                });
-
-                $(this.floatingContainer).mouseleave(function(){
-                    $(this).animate({
-                        height: '55px'
-                    });
-                });
+            if (typeof this.mainButtonIconHover !== "undefined") {
+                _mainButtonIconHoverName = this.mainButtonIconHover;
+                _endOfIconHoverName  = _mainButtonIconHoverName.indexOf("?");
+                if (_endOfIconHoverName !== -1) {
+                    _mainButtonIconHoverName = _mainButtonIconHoverName.substring(0, _endOfIconHoverName );
+                }
+                this.mainButtonEdit.src = _mainButtonIconHoverName;
             }
 
             //Set position of the widget
@@ -297,4 +297,4 @@ define([
     });
 });
 
-require(["FloatingActionButton/widget/FloatingActionButton/widget/FloatingActionButton"]);
+require(["FloatingActionButton/widget/FloatingActionButton"]);
